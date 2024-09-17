@@ -1,0 +1,90 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+
+# Arquivos compilados
+target/
+
+# Arquivos de configuração local
+application.properties
+application.yml
+
+# Arquivos de log
+log/
+
+# Dependências gerenciadas pelo Maven
+# Certifique-se de ajustar para o seu gerenciador de dependências se estiver usando algo diferente do Maven
+# Exemplo do Gradle: /build/
+# Exemplo do Ant: /build/
+# Exemplo do Ivy: /build/
+/.mvn/
+/mvnw
+/mvnw.cmd
+
+# Logs do Maven
+mvn*.log
+
+# Arquivos do Eclipse IDE
+.classpath
+.project
+.settings/
+
+# Arquivos do IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Cache do Thymeleaf
+target/classes/templates/*.html
+
+# Cache do Spring Boot DevTools
+# Comente as linhas abaixo se não estiver usando o Spring Boot DevTools
+.spring-boot-devtools.properties
+
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+.idea/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+.repository
+
+### CI ###
+buildspec.yml

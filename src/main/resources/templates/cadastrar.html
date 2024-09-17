@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  th:with="version=${#strings.randomAlphanumeric(3)}">
+<head>
+	<title>Cadastro Unificado - userin</title>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport"
+		  content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta name="description"
+		  content="Cadastro unificado de usuários, capitães, tripulação e barcos" />
+	<meta name="author" content="GABRIEL" />
+	<link rel="icon" th:href="@{/image/favicon.ico}" />
+
+	<!-- Favicons -->
+	<link th:href="@{/user/img/favicon.png}" rel="icon">
+	<link th:href="@{/user/img/apple-touch-icon.png}" rel="apple-touch-icon">
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.gstatic.com" rel="preconnect">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+	<!-- Vendor CSS Files -->
+	<link th:href="@{/user/vendor/bootstrap/css/bootstrap.min.css}"
+		  rel="stylesheet">
+	<link th:href="@{/user/vendor/bootstrap-icons/bootstrap-icons.css}"
+		  rel="stylesheet">
+
+	<!-- Template Main CSS File -->
+	<link th:href="@{/user/css/style.css}" rel="stylesheet">
+
+</head>
+<body>
+<header>
+</header>
+<main id="main" class="main">
+	<div class="pagetitle">
+		<h1>Cadastro Produto</h1>
+		<nav>
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item active">Cadastro de Produto</li>
+			</ol>
+		</nav>
+	</div>
+	<!-- End Page Title -->
+	<section class="section dashboard">
+		<div class="row">
+			<!-- Left side columns -->
+			<div class="col-lg-12">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Formulario de Cadastro</h5>
+						<form th:action="@{/cadastrar}" method="POST"
+							  class="row g-3 was-validated needs-validation" novalidate>
+
+							<!-- Cadastro de Usuário -->
+							<h6 class="mt-6" style="font-weight: bold;">Informações Produto</h6>
+							<div class="col-md-6">
+								<label for="nome" class="form-label">Nome</label>
+								<input type="text" class="form-control" id="nome" name="nome" required>
+								<div class="invalid-feedback">Insira o nome do produto.</div>
+							</div>
+							<div class="col-md-6">
+								<label for="marca" class="form-label">Marca</label>
+								<input type="text" class="form-control" id="marca" name="marca" required>
+								<div class="invalid-feedback">Insira a marca.</div>
+							</div>
+							<div class="col-md-6">
+								<label for="descricao" class="form-label">Descrição</label>
+								<input type="text" class="form-control" id="descricao" name="descricao" required>
+								<div class="invalid-feedback">Insira a descrição.</div>
+							</div>
+							<div class="col-md-6">
+								<label for="tipoProduto" class="form-label">Tipo Produto</label>
+								<select id="tipoProduto" name="tipoProduto" class="form-select" required>
+									<option value="">selecione...</option>
+									<option value="eletrodomestico">Eletrodomestico</option>
+									<option value="movel">Móveis</option>
+									<option value="informatica">Informatica</option>
+									<option value="outro">Outro</option>
+								</select>
+								<div class="invalid-feedback">Selecione o Tipo do Produto.</div>
+							</div>
+							<div class="col-md-6">
+								<label for="valor" class="form-label">Valor</label>
+								<input type="text" class="form-control" id="valor" name="valor" required>
+								<div class="invalid-feedback">Insira o valor.</div>
+							</div>
+							<div class="col-md-6">
+								<label for="quantidade" class="form-label">Quantidade</label>
+								<div class="quantity-controls">
+									<input type="number" class="form-control" id="quantidade" name="quantidade" value="1" min="1" required>
+								</div>
+								<div class="invalid-feedback">Insira a quantidade.</div>
+							</div>
+							<!-- Botão de Salvar -->
+							<div class="col-12 mt-8">
+								<button class="btn btn-primary" type="submit">Cadastrar</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</main>
+<!-- End #main -->
+
+<script>
+	function formatCurrency(input) {
+        let value = input.value.replace(/\D/g, '');
+        value = (value / 100).toFixed(2).replace('.', ',');
+        value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        input.value = value;
+    }
+</script>
+
+</body>
+</html>

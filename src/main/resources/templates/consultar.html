@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="version=${#strings.randomAlphanumeric(3)}">
+<head>
+    <title>Consulta de Produtos</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description"
+          content="Cadastro unificado de usuários, capitães, tripulação e barcos" />
+    <meta name="author" content="GABRIEL" />
+    <link rel="icon" th:href="@{/image/favicon.ico}" />
+
+    <!-- Favicons -->
+    <link th:href="@{/user/img/favicon.png}" rel="icon">
+    <link th:href="@{/user/img/apple-touch-icon.png}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link th:href="@{/user/vendor/bootstrap/css/bootstrap.min.css}"
+          rel="stylesheet">
+    <link th:href="@{/user/vendor/bootstrap-icons/bootstrap-icons.css}"
+          rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link th:href="@{/user/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<!-- Sidebar -->
+<aside id="sidebar" class="sidebar" xmlns:th="http://www.w3.org/1999/xhtml">
+    <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/cadastrar}">
+                <i class="bi bi-plus-circle"></i>
+                <span>Cadastrar Produto</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/consultar}">
+                <i class="bi bi-search"></i>
+                <span>Consultar Produtos</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Consulta de Produtos</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active">Consulta de Produtos</li>
+            </ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Filtros de pesquisa -->
+                        <div class="row mb-4">
+                            <div class="col-md-6" >
+                                <input type="text" class="form-control" placeholder="Buscar por nome..." id="searchNome">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="searchTipo">
+                                    <option value="">Tipo de Produto</option>
+                                    <option value="eletrodomestico">Eletrodomestico</option>
+                                    <option value="movel">Móveis</option>
+                                    <option value="informatica">Informatica</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary" onclick="pesquisar()">
+                                    <i class="bi bi-search"></i> Pesquisar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tabela de produtos -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Marca</th>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    <th>Quantidade</th>
+                                    <th>Ações</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="produto : ${produtos}">
+                                    <td th:text="${produto.idProduto}"></td>
+                                    <td th:text="${produto.nome}"></td>
+                                    <td th:text="${produto.marca}"></td>
+                                    <td th:text="${produto.tipoProduto}"></td>
+                                    <td th:text="${#numbers.formatCurrency(produto.valor)}"></td>
+                                    <td th:text="${produto.quantidade}"></td>
+                                    <td>
+                                        <a th:href="@{/editar/{id}(id=${produto.idProduto})}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-danger" onclick="confirmarExclusao(${produto.idProduto})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja realmente excluir este produto?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="excluirProduto()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let produtoIdParaExcluir = null;
+
+    function confirmarExclusao(id) {
+        produtoIdParaExcluir = id;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function excluirProduto() {
+        if (produtoIdParaExcluir) {
+            window.location.href = `/excluir/${produtoIdParaExcluir}`;
+        }
+    }
+
+    function pesquisar() {
+        const nome = document.getElementById('searchNome').value;
+        const tipo = document.getElementById('searchTipo').value;
+        window.location.href = `/consultar?nome=${nome}&tipo=${tipo}`;
+    }
+</script>
+</body>
+</html>

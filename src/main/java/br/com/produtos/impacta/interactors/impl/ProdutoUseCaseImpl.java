@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ProdutoUseCaseImpl implements ProdutoUseCase {
@@ -17,5 +19,10 @@ public class ProdutoUseCaseImpl implements ProdutoUseCase {
     @Override
     public ProdutoEntity cadastrar(ProdutoEntity barco) {
         return produtoRepository.criar(barco);
+    }
+
+    @Override
+    public List<ProdutoEntity> consultar() {
+        return produtoRepository.consultar();
     }
 }

@@ -6,11 +6,15 @@ import br.com.produtos.impacta.repositories.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Repository
@@ -39,5 +43,11 @@ public class ProdutoRepositoryImpl extends JdbcRepository implements ProdutoRepo
         } catch (final DataRetrievalFailureException e) {
             return null;
         }
+    }
+
+    @Override
+    public List<ProdutoEntity> consultar() {
+        var result = npjt.query(consultar, BeanPropertyRowMapper.newInstance(ProdutoEntity.class));
+        return result.isEmpty() ? new ArrayList<>() : result;
     }
 }

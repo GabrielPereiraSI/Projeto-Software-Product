@@ -25,4 +25,19 @@ public class ProdutoUseCaseImpl implements ProdutoUseCase {
     public List<ProdutoEntity> consultar() {
         return produtoRepository.consultar();
     }
+
+    @Override
+    public ProdutoEntity consultarById(Long produtoId) {
+        return produtoRepository.consultarById(produtoId);
+    }
+
+    @Override
+    public void alterarProduto(ProdutoEntity produto) {
+        produtoRepository.alterar(produto);
+    }
+
+    @Override
+    public void deletarProduto(Long produtoId) {
+        produtoRepository.deletar(produtoId);
+    }
 }

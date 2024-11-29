@@ -33,6 +33,9 @@ public class ProdutoRepositoryImpl extends JdbcRepository implements ProdutoRepo
     @Value("${SPS.PRODUTO}")
     protected String consultar;
 
+    @Value("${SPS.PRODUTO_ID}")
+    protected String consultarById;
+
     @Override
     public ProdutoEntity criar(final ProdutoEntity produto) {
         final KeyHolder kh = new GeneratedKeyHolder();
@@ -49,5 +52,31 @@ public class ProdutoRepositoryImpl extends JdbcRepository implements ProdutoRepo
     public List<ProdutoEntity> consultar() {
         var result = npjt.query(consultar, BeanPropertyRowMapper.newInstance(ProdutoEntity.class));
         return result.isEmpty() ? new ArrayList<>() : result;
+    }
+
+    @Override
+    public ProdutoEntity consultarById(Long produtoId) {
+        final MapSqlParameterSource parametros = new MapSqlParameterSource();
+        parametros.addValue("produtoId", produtoId);
+        return npjt.query(consultarById, parametros, BeanPropertyRowMapper.newInstance(ProdutoEntity.class)).get(0);
+    }
+
+    @Override
+    public void alterar(ProdutoEntity produto) {
+        final MapSqlParameterSource parametros = new MapSqlParameterSource();
+        parametros.addValue("nome", produto.getNome());
+        parametros.addValue("marca", produto.getMarca());
+        parametros.addValue("tipoProduto", produto.getTipoProduto());
+        parametros.addValue("valor", produto.getValor());
+        parametros.addValue("quantidade", produto.getQuantidade());
+        parametros.addValue("idProduto", produto.getIdProduto());
+        npjt.update(alterar, parametros);
+    }
+
+    @Override
+    public void deletar(Long produtoId) {
+        final MapSqlParameterSource parametros = new MapSqlParameterSource();
+        parametros.addValue("produtoId", produtoId);
+        npjt.update(deletar, parametros);
     }
 }

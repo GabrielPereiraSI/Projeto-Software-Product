@@ -36,7 +36,7 @@
 <aside id="sidebar" class="sidebar" xmlns:th="http://www.w3.org/1999/xhtml">
     <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/cadastrar}">
+            <a class="nav-link" th:href="@{/home}">
                 <i class="bi bi-plus-circle"></i>
                 <span>Cadastrar Produto</span>
             </a>
@@ -109,10 +109,10 @@
                                     <td th:text="${#numbers.formatCurrency(produto.valor)}"></td>
                                     <td th:text="${produto.quantidade}"></td>
                                     <td>
-                                        <a th:href="@{/editar/{id}(id=${produto.idProduto})}" class="btn btn-sm btn-primary">
+                                        <a href="#" th:onclick="'loadProdutoDetails('+ ${produto.idProduto} +'); return false;'" class="btn btn-primary btn-sm">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button class="btn btn-sm btn-danger" onclick="confirmarExclusao(${produto.idProduto})">
+                                        <button type="button" class="btn btn-danger btn-sm" th:onclick="'confirmarExclusao(' + ${produto.idProduto} + ')'">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </td>
@@ -126,7 +126,51 @@
         </div>
     </section>
 </main>
-
+<!-- Modal de Edição do Produto -->
+<div class="modal fade" id="produtoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3">
+                        <label for="editNome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="editNome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editMarca" class="form-label">Marca</label>
+                        <input type="text" class="form-control" id="editMarca" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTipo" class="form-label">Tipo</label>
+                        <select class="form-select" id="editTipo" required>
+                            <option value="eletrodomestico">Eletrodomestico</option>
+                            <option value="movel">Móveis</option>
+                            <option value="informatica">Informatica</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editValor" class="form-label">Valor</label>
+                        <input type="number" step="0.01" class="form-control" id="editValor" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editQuantidade" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="editQuantidade" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="salvarEdicao()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal de confirmação de exclusão -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
@@ -145,26 +189,99 @@
         </div>
     </div>
 </div>
-
+<script th:src="@{/user/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script>
-    let produtoIdParaExcluir = null;
+    function loadProdutoDetails(produtoId) {
+       fetch(`/produtos/find/${produtoId}`)
+           .then(response => response.json())
+           .then(data => {
+               // Preenche os campos do modal com os dados do produto
+               document.getElementById('editId').value = data.idProduto;
+               document.getElementById('editNome').value = data.nome;
+               document.getElementById('editMarca').value = data.marca;
+               document.getElementById('editTipo').value = data.tipoProduto;
+               document.getElementById('editValor').value = data.valor;
+               document.getElementById('editQuantidade').value = data.quantidade;
 
-    function confirmarExclusao(id) {
-        produtoIdParaExcluir = id;
-        new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    }
+               // Mostra o modal
+               const modal = new bootstrap.Modal(document.getElementById('produtoModal'));
+               modal.show();
+           })
+           .catch(error => {
+               console.error('Erro ao carregar detalhes do produto:', error);
+               alert('Erro ao carregar detalhes do produto. Por favor, tente novamente.');
+           });
+   }
 
-    function excluirProduto() {
-        if (produtoIdParaExcluir) {
-            window.location.href = `/excluir/${produtoIdParaExcluir}`;
-        }
-    }
+   function salvarEdicao() {
+       const produto = {
+           idProduto: document.getElementById('editId').value,
+           nome: document.getElementById('editNome').value,
+           marca: document.getElementById('editMarca').value,
+           tipoProduto: document.getElementById('editTipo').value,
+           valor: parseFloat(document.getElementById('editValor').value),
+           quantidade: parseInt(document.getElementById('editQuantidade').value)
+       };
 
-    function pesquisar() {
-        const nome = document.getElementById('searchNome').value;
-        const tipo = document.getElementById('searchTipo').value;
-        window.location.href = `/consultar?nome=${nome}&tipo=${tipo}`;
-    }
+       console.log('Dados sendo enviados:', produto);
+
+       const API_URL = 'http://localhost:8080';
+
+       fetch(`${API_URL}/produtos/update/${produto.idProduto}`, {
+           method: 'PUT',
+           headers: {
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'
+           },
+           body: JSON.stringify(produto)
+       })
+       .then(async response => {
+           console.log('Status da resposta:', response.status);
+
+           if (response.ok) {
+               alert('Produto atualizado com sucesso!');
+               window.location.reload();
+           } else {
+               const text = await response.text();
+               console.log('Erro retornado:', text);
+               throw new Error(text || 'Erro ao atualizar produto');
+           }
+       })
+       .catch(error => {
+           console.error('Erro detalhado:', error);
+           alert('Erro ao atualizar produto: ' + error.message);
+       });
+   }
+
+   function confirmarExclusao(produtoId) {
+       if (confirm('Tem certeza que deseja excluir este produto?')) {
+           deletarProduto(produtoId);
+       }
+   }
+
+   function deletarProduto(produtoId) {
+       const API_URL = 'http://localhost:8080';
+
+       fetch(`${API_URL}/produtos/deletar/${produtoId}`, {
+           method: 'DELETE',
+           headers: {
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'
+           }
+       })
+       .then(response => {
+           if (response.ok) {
+               alert('Produto excluído com sucesso!');
+               window.location.reload(); // Recarrega a página para atualizar a lista
+           } else {
+               throw new Error('Erro ao excluir produto');
+           }
+       })
+       .catch(error => {
+           console.error('Erro:', error);
+           alert('Erro ao excluir produto: ' + error.message);
+       });
+   }
 </script>
 </body>
 </html>

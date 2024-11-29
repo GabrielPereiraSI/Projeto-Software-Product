@@ -8,4 +8,7 @@ public interface ProdutoRepository {
 
     ProdutoEntity criar(ProdutoEntity barco);
     List<ProdutoEntity> consultar();
+    ProdutoEntity consultarById(Long produtoId);
+    void alterar(ProdutoEntity produto);
+    void deletar(Long produtoId);
 }
